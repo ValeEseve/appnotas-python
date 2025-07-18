@@ -9,7 +9,7 @@ def listarTareas():
     print("************** Lista de tareas **************")
     for i, tarea in enumerate(tareas):
         estadoTarea = "Completada" if tarea["estado"] else "Pendiente"
-        relleno = "." * (ancho - len(tarea["nombre"]) - len(estadoTarea))
+        relleno = "." * max(0, ancho - len(tarea["nombre"]) - len(estadoTarea))
         print(f'{i + 1}. {tarea["nombre"]}{relleno}{estadoTarea}')
 
 
@@ -23,9 +23,9 @@ def eliminarTarea(indice):
 #  Programa
 
 opcion = 0
+mensajeErrorInput = "*************Debe seleccionar una opción válida*************"
 
-
-
+print("¡Bienvenid@ al Gestor de Tareas!")
 while True:
     print("""
           --- Gestor de Tareas ---
@@ -36,25 +36,46 @@ while True:
           5. Salir""")
     try:
         opcion = int(input("Elige una opción: "))
-    except:
-        print("*************Debe seleccionar una opción válida*************")
+        if opcion < 1 or opcion > 5:
+            print(mensajeErrorInput)
+            opcion = 0
+    except ValueError:
+        print(mensajeErrorInput)
+        opcion = 0
     if opcion == 1:
-        tarea = input("Ingrese el nombre de la tarea")
-        agregarTarea(tarea)
-        print(f"¡'{tarea} agregada exitosamente!'")
+        tarea = input("Ingrese el nombre de la tarea: ")
+        if tarea:
+            agregarTarea(tarea)
+            print(f"¡'{tarea}' agregada exitosamente!")
+        else:
+            print("La tarea no puede estar vacía.")
     if opcion == 2:
         listarTareas()
     if opcion == 3:
         listarTareas()
-        indice = int(input("Ingrese el número de la tarea a completar o dejar pendiente: "))
-        marcarTarea(indice)
-        listarTareas()
+        try:
+            indice = int(input("Ingrese el número de la tarea a completar o dejar pendiente: "))
+            if indice < 1 or indice > len(tareas):
+                print(mensajeErrorInput)
+            else:
+                marcarTarea(indice)
+                listarTareas()
+        except ValueError:
+            opcion = 0
+            print(mensajeErrorInput)
     if opcion == 4:
         listarTareas()
-        indice = int(input("Ingrese el número de la tarea a eliminar: "))
-        tareaAEliminar = tareas[indice]["nombre"]
-        eliminarTarea(indice)
-        print(f"¡'{tareaAEliminar}' eliminada exitosamente!")
+        try:
+            indice = int(input("Ingrese el número de la tarea a eliminar: "))
+            if indice < 1 or indice > len(tareas):
+                print(mensajeErrorInput)
+            else:
+                tareaAEliminar = tareas[indice - 1]["nombre"]
+                eliminarTarea(indice)
+                print(f"¡'{tareaAEliminar}' eliminada exitosamente!")
+        except ValueError:
+            opcion = 0
+            print(mensajeErrorInput)
     if opcion == 5:
         break
 
